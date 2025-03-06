@@ -15,7 +15,7 @@ function openPopupRun() {
     
   <aside>
     <dev class="run">
-        <div class="button_slide slide_right" @click="openPopupRun">Chạy</div>
+        <button class="btn btn-primary" @click="openPopupRun">Run workflow</button>
     </dev>
 
     <br><br>

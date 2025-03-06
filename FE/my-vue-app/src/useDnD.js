@@ -1,13 +1,13 @@
-import { useVueFlow } from '@vue-flow/core'
-import { ref, watch } from 'vue'
+import { useVueFlow } from "@vue-flow/core";
+import { ref, watch } from "vue";
 
-let id = 0
+let id = 0;
 
 /**
  * @returns {string} - A unique id.
  */
 function getId() {
-  return `dndnode_${id++}`
+  return `dndnode_${id++}`;
 }
 
 /**
@@ -21,27 +21,28 @@ const state = {
   draggedType: ref(null),
   isDragOver: ref(false),
   isDragging: ref(false),
-}
+};
 
 export default function useDragAndDrop() {
-  const { draggedType, isDragOver, isDragging } = state
+  const { draggedType, isDragOver, isDragging } = state;
 
-  const { addNodes, screenToFlowCoordinate, onNodesInitialized, updateNode } = useVueFlow()
+  const { addNodes, screenToFlowCoordinate, onNodesInitialized, updateNode } =
+    useVueFlow();
 
   watch(isDragging, (dragging) => {
-    document.body.style.userSelect = dragging ? 'none' : ''
-  })
+    document.body.style.userSelect = dragging ? "none" : "";
+  });
 
   function onDragStart(event, type) {
     if (event.dataTransfer) {
-      event.dataTransfer.setData('application/vueflow', type)
-      event.dataTransfer.effectAllowed = 'move'
+      event.dataTransfer.setData("application/vueflow", type);
+      event.dataTransfer.effectAllowed = "move";
     }
 
-    draggedType.value = type
-    isDragging.value = true
+    draggedType.value = type;
+    isDragging.value = true;
 
-    document.addEventListener('drop', onDragEnd)
+    document.addEventListener("drop", onDragEnd);
   }
 
   /**
@@ -50,26 +51,26 @@ export default function useDragAndDrop() {
    * @param {DragEvent} event
    */
   function onDragOver(event) {
-    event.preventDefault()
+    event.preventDefault();
 
     if (draggedType.value) {
-      isDragOver.value = true
+      isDragOver.value = true;
 
       if (event.dataTransfer) {
-        event.dataTransfer.dropEffect = 'move'
+        event.dataTransfer.dropEffect = "move";
       }
     }
   }
 
   function onDragLeave() {
-    isDragOver.value = false
+    isDragOver.value = false;
   }
 
   function onDragEnd() {
-    isDragging.value = false
-    isDragOver.value = false
-    draggedType.value = null
-    document.removeEventListener('drop', onDragEnd)
+    isDragging.value = false;
+    isDragOver.value = false;
+    draggedType.value = null;
+    document.removeEventListener("drop", onDragEnd);
   }
 
   /**
@@ -81,29 +82,28 @@ export default function useDragAndDrop() {
     const position = screenToFlowCoordinate({
       x: event.clientX,
       y: event.clientY,
-    })
-    const nodeId = getId()
+    });
+    const nodeId = getId();
 
     // Ánh xạ tên node theo type
-  const nodeNames = {
-    start: 'Bắt đầu',
-    code: 'Code {/}',
-    end: 'Kết thúc',
-  }
+    const nodeNames = {
+      start: "Bắt đầu",
+      code: "Code {/}",
+      end: "Kết thúc",
+    };
 
-  // Lấy tên từ ánh xạ dựa trên type của node
-  const nodeName = nodeNames[draggedType.value] || "";
+    // Lấy tên từ ánh xạ dựa trên type của node
+    const nodeName = nodeNames[draggedType.value] || "";
 
-  let label = nodeName? nodeName : nodeId;
-
-    const newNode = {
+    let label = nodeName ? nodeName : nodeId;
+    let newNode = {
       id: nodeId,
       type: draggedType.value,
       position,
       data: { label: label },
-    }
+    };
 
-    newNode = addSpecialAttrToNode(newNode);
+    addSpecialAttrToNode(newNode);
 
     /**
      * Align node position after drop, so it's centered to the mouse
@@ -112,51 +112,57 @@ export default function useDragAndDrop() {
      */
     const { off } = onNodesInitialized(() => {
       updateNode(nodeId, (node) => ({
-        position: { x: node.position.x - node.dimensions.width / 2, y: node.position.y - node.dimensions.height / 2 },
-      }))
+        position: {
+          x: node.position.x - node.dimensions.width / 2,
+          y: node.position.y - node.dimensions.height / 2,
+        },
+      }));
 
-      off()
-    })
+      off();
+    });
 
-    addNodes(newNode)
+    addNodes(newNode);
   }
 
-  function addSpecialAttrToNode (node){
+  function addSpecialAttrToNode(node) {
     switch (node.type) {
-      case 'start':
+      case "start":
         node.data = {
           ...node.data,
-          "variables": []
-        }
+          variables: [],
+        };
         break;
-      case 'end':
+      case "end":
         node.data = {
           ...node.data,
-          "outputs": []
-        }
+          outputs: [],
+        };
         break;
-        case 'code':
-          node.data = {
-            ...node.data,
-            "code": `
-            function main({arg1, arg2}) 
+      case "code":
+        node.data = {
+          ...node.data,
+          code: `
+function main({arg1, arg2}) 
+{
+  return 
+  {
+    result: arg1 + arg2
+  }
+}`,
+          code_language: "javascript",
+          outputs: [
             {
-              return 
-              {
-                result: arg1 + arg2
-              }
-            }`,
-            "code_language": "javascript",
-            "outputs": [
-                    {
-                        "Variable": "result",
-                        "Type": "number",
-                        "ValueSelector": []
-                    }
-                ],
-            "variables": [{variable: "arg1", value_selector: []}, {variable: "arg2", value_selector: []}]
-          }
-          break;
+              variable: "result",
+              type: "number",
+              valueSelector: [],
+            },
+          ],
+          variables: [
+            { variable: "arg1", valueSelector: [] },
+            { variable: "arg2", valueSelector: [] },
+          ],
+        };
+        break;
       default:
         break;
     }
@@ -170,5 +176,5 @@ export default function useDragAndDrop() {
     onDragLeave,
     onDragOver,
     onDrop,
-  }
+  };
 }

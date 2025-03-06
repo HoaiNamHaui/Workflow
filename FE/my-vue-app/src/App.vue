@@ -104,6 +104,8 @@ onNodeClick(({ event, node }) => {
       v-if="isShowPopupConfig"
       @close-popup-config="closePopupConfig"
       :node-data="selectedNode"
+      :nodes="nodes"
+      :edges="edges"
       class="popup-config-node"
     />
     <PopupRun v-if="isPopupRunVisible" class="popup-run" @close-popup-run="closePopupRun"/>

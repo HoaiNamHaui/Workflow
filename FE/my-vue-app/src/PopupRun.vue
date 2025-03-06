@@ -20,7 +20,7 @@
                     Number2: <input v-model="number2" class="styled-number" type="number" placeholder="Vui lòng nhập" required />
                 </div>
                 
-                <input type="button" class="btn-start-run" value="Bắt đầu chạy" @click="startRun" />
+                <button @click="startRun" class="btn btn-primary mt-2">Bắt đầu chạy</button>
                 </div>
 
                 <div v-else>
