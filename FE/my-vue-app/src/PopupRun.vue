@@ -13,11 +13,9 @@
             <div class="tab-content">
                 <div v-if="activeTab === 'input'">
                 <label>Nhập dữ liệu:</label> <br>
-                <div style="margin: 10px 0;">
-                    Number1: <input v-model="number1" class="styled-number" type="number" placeholder="Vui lòng nhập" required />
-                </div>
-                <div>
-                    Number2: <input v-model="number2" class="styled-number" type="number" placeholder="Vui lòng nhập" required />
+                <div style="margin: 10px 0;" v-for="(variable, index) in variables" :key="index">
+                    <label>{{ variable.variable }}:</label>
+                    <input v-model="number1" class="styled-number" :type="variable.type" placeholder="Vui lòng nhập" required />
                 </div>
                 
                 <button @click="startRun" class="btn btn-primary mt-2">Bắt đầu chạy</button>
@@ -25,9 +23,6 @@
 
                 <div v-else>
                 <h3>Kết quả:</h3>
-                <p>Số thứ nhất: {{ number1 }}</p>
-                <p>Số thứ 2: {{ number2 }}</p>
-                <p>Tổng hai số: {{ sum }}</p>
                 </div>
             </div>
       </div>
@@ -35,8 +30,29 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, defineProps, onBeforeMount } from "vue";
 const emit = defineEmits(['close-popup-run'])
+
+// Định nghĩa props
+const props = defineProps({
+  nodes: {
+    type: Array,
+    required: true,
+  },
+  edges: {
+    type: Array,
+    required: true,
+  },
+});
+
+let nodeStart = ref({});
+let variables = ref([]);
+
+onBeforeMount(() => {
+  nodeStart.value = props.nodes.find((node) => node.type === 'start');
+  variables.value = nodeStart.value.data.variables;
+})
+
 
 /**
  * đóng popup run
@@ -46,22 +62,25 @@ function closePopupRun() {
 }
 
 const activeTab = ref('input') // Mặc định là tab nhập liệu
-const number1 = ref('')      // Dữ liệu nhập vào
-const number2 = ref('')      // Dữ liệu nhập vào
-const sum = ref('')      // Tổng 2 số nhập vào
 
 /**
  * Bắt đầu chạy workflow: lấy input , workflow gọi api để chạy
  */
 function startRun() {
-    // gọi api để chạy kết nối SSE
+  let workflowID = "";
+  let inputs = {};
+  
+  // Kết nối SSE
+  // const eventSource = new EventSource('http://localhost:5000/api/sse/stream');
 
-    // Update trạng thái từng node
+  //   eventSource.onmessage = (event) => {
+  //     this.messages.push(event.data); 
+  //   };
 
-    // Lỗi ở đâu show lỗi ở node đó
-
-    // không lỗi có kết quả thì mở sang tab kết quả
-    sum.value = number1.value + number2.value
+  //   eventSource.onerror = (error) => {
+  //     console.error('SSE error:', error);
+  //     eventSource.close(); 
+  //   };
     activeTab.value = 'result';
 }
 </script>

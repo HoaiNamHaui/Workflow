@@ -238,7 +238,6 @@ function getVariables(nodeId, nodes, edges) {
       type: "",
       valueSelector: [],
     };
-    debugger
     if (
       node &&
       node.data &&

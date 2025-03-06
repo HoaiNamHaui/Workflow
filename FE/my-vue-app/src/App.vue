@@ -108,7 +108,7 @@ onNodeClick(({ event, node }) => {
       :edges="edges"
       class="popup-config-node"
     />
-    <PopupRun v-if="isPopupRunVisible" class="popup-run" @close-popup-run="closePopupRun"/>
+    <PopupRun v-if="isPopupRunVisible" :nodes="nodes" :edges="edges" class="popup-run" @close-popup-run="closePopupRun"/>
     <Sidebar @open-popup-run="openPopupRun"/>
   </div>
 </template>
@@ -143,4 +143,29 @@ onNodeClick(({ event, node }) => {
     border-radius: 8px;
   }
 
+  .progress-box {
+  border: 2px solid transparent important;
+}
+
+.progress-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 2px solid #4caf50; /* Màu của border */
+  border-radius: 10px;
+  box-sizing: border-box;
+  animation: running-border 2s linear infinite;
+}
+
+@keyframes running-border {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 </style>
