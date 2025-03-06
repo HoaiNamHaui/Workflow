@@ -1,0 +1,159 @@
+{
+    "Nodes": [
+        {
+            "Data": {
+                "Desc": "",
+                "Selected": true,
+                "Title": "Start",
+                "Type": "start",
+                "Variables": [
+                    {
+                        "Variable": "Number1",
+                        "Label": "Number1",
+                        "Type": "number",
+                        "MaxLength": 48,
+                        "Required": true,
+                        "Options": []
+                    },
+                    {
+                        "Variable": "Number2",
+                        "Label": "Number2",
+                        "Type": "number",
+                        "MaxLength": 48,
+                        "Required": true,
+                        "Options": []
+                    }
+                ]
+            },
+            "Height": 142,
+            "NodeID": "1729057546420",
+            "Position": {
+                "X": -808.4517154652083,
+                "Y": -86.21232791650696
+            },
+            "PositionAbsolute": {
+                "X": -808.4517154652083,
+                "Y": -86.21232791650696
+            },
+            "SourcePosition": "right",
+            "TargetPosition": "left",
+            "Type": "custom",
+            "Width": 244,
+            "Selected": true
+        },
+        {
+            "NodeID": "1740994112496",
+            "Type": "custom",
+            "Data": {
+                "Type": "code",
+                "Title": "Code",
+                "Desc": "",
+                "Variables": [
+                    {
+                        "Variable": "arg1",
+                        "ValueSelector": [
+                            "1729057546420",
+                            "Number1"
+                        ]
+                    },
+                    {
+                        "Variable": "arg2",
+                        "ValueSelector": [
+                            "1729057546420",
+                            "Number2"
+                        ]
+                    }
+                ],
+                "CodeLanguage": "javascript",
+                "Code": "\nfunction main({arg1, arg2}) {\n    return {\n        result: arg1 + arg2\n    }\n}\n",
+                "Outputs": [
+                    {
+                        "Variable": "result",
+                        "Type": "number",
+                        "ValueSelector": []
+                    }
+                ],
+                "Selected": false
+            },
+            "Position": {
+                "X": -504.4517154652083,
+                "Y": -86.21232791650696
+            },
+            "TargetPosition": "left",
+            "SourcePosition": "right",
+            "PositionAbsolute": {
+                "X": -504.4517154652083,
+                "Y": -86.21232791650696
+            },
+            "Width": 244,
+            "Height": 54,
+            "Selected": false
+        },
+        {
+            "NodeID": "1740994147323",
+            "Type": "custom",
+            "Data": {
+                "Type": "end",
+                "Title": "End",
+                "Desc": "",
+                "Outputs": [
+                    {
+                        "Variable": "result",
+                        "ValueSelector": [
+                            "1740994112496",
+                            "result"
+                        ]
+                    }
+                ],
+                "Selected": false
+            },
+            "Position": {
+                "X": -200.45171546520828,
+                "Y": -86.21232791650696
+            },
+            "TargetPosition": "left",
+            "SourcePosition": "right",
+            "PositionAbsolute": {
+                "X": -200.45171546520828,
+                "Y": -86.21232791650696
+            },
+            "Width": 244,
+            "Height": 90
+        }
+    ],
+    "Edges": [
+        {
+            "EdgeID": "1729057546420-source-1740994112496-target",
+            "Type": "custom",
+            "Source": "1729057546420",
+            "SourceHandle": "source",
+            "Target": "1740994112496",
+            "TargetHandle": "target",
+            "Data": {
+                "SourceType": "start",
+                "TargetType": "code",
+                "IsInIteration": false
+            },
+            "ZIndex": 0
+        },
+        {
+            "EdgeID": "1740994112496-source-1740994147323-target",
+            "Type": "custom",
+            "Source": "1740994112496",
+            "SourceHandle": "source",
+            "Target": "1740994147323",
+            "TargetHandle": "target",
+            "Data": {
+                "SourceType": "code",
+                "TargetType": "end",
+                "IsInIteration": false
+            },
+            "ZIndex": 0
+        }
+    ],
+    "Viewport": {
+        "X": 625.24812455359,
+        "Y": 433.5483169494122,
+        "Zoom": 0.7169776240079136
+    }
+}

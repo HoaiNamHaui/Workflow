@@ -1,0 +1,62 @@
+{
+  "nodes": [
+    {
+      "id": "dndnode_0",
+      "type": "start",
+      "initialized": false,
+      "position": { "x": 582.1198722754177, "y": 161.01624952893377 },
+      "data": { "label": "Bắt đầu" }
+    },
+    {
+      "id": "dndnode_1",
+      "type": "code",
+      "initialized": false,
+      "position": { "x": 541.195524979637, "y": 278.4842834334896 },
+      "data": { "label": "Code {/}" }
+    },
+    {
+      "id": "dndnode_2",
+      "type": "end",
+      "initialized": false,
+      "position": { "x": 506.3340439498978, "y": 357.3015448920303 },
+      "data": { "label": "Kết thúc" }
+    }
+  ],
+  "edges": [
+    {
+      "id": "vueflow__edge-dndnode_0-dndnode_1",
+      "type": "default",
+      "source": "dndnode_0",
+      "target": "dndnode_1",
+      "sourceHandle": null,
+      "targetHandle": null,
+      "data": {},
+      "label": "",
+      "sourceX": 657.1197575311187,
+      "sourceY": 200.0162075729591,
+      "targetX": 616.1954564912635,
+      "targetY": 275.4842860016186
+    },
+    {
+      "id": "vueflow__edge-dndnode_1-dndnode_2",
+      "type": "default",
+      "source": "dndnode_1",
+      "target": "dndnode_2",
+      "sourceHandle": null,
+      "targetHandle": null,
+      "data": {},
+      "label": "",
+      "sourceX": 616.1954564912635,
+      "sourceY": 317.48421834955224,
+      "targetX": 581.3339292055988,
+      "targetY": 354.30154746015927
+    }
+  ],
+  "position": [-237.07486979348766, -95.21335741032254],
+  "zoom": 1.3195079107728944,
+  "viewport": {
+    "x": -237.07486979348766,
+    "y": -95.21335741032254,
+    "zoom": 1.3195079107728944
+  }
+}
