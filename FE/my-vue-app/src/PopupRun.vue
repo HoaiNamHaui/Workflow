@@ -15,7 +15,7 @@
                 <label>Nhập dữ liệu:</label> <br>
                 <div style="margin: 10px 0;" v-for="(variable, index) in variables" :key="index">
                     <label>{{ variable.variable }}:</label>
-                    <input class="styled-number" :type="variable.type"  placeholder="Vui lòng nhập" required />
+                    <input class="styled-number" :type="variable.type" :name="variable.variable"  placeholder="Vui lòng nhập" required />
                 </div>
                 
                 <button @click="startRun" class="btn btn-primary mt-2">Bắt đầu chạy</button>
@@ -31,6 +31,9 @@
 
 <script setup>
 import { ref, defineProps, onBeforeMount } from "vue";
+import * as Vue from 'vue' // in Vue 3
+import axios from 'axios'
+import VueAxios from 'vue-axios'
 const emit = defineEmits(['close-popup-run'])
 
 // Định nghĩa props
@@ -67,16 +70,25 @@ const activeTab = ref('input') // Mặc định là tab nhập liệu
  * Bắt đầu chạy workflow: lấy input , workflow gọi api để chạy
  */
 function startRun() {
+
+  // Lưu workflow để lấy ID 
   let workflowID = "";
+
   let inputs = {};
+
+  if(variables.value.length > 0){
+    variables.value.forEach((variable) => {
+      inputs[variable.variable] = document.getElementsByName(variable.variable)[0].value;
+    });
+  }
   
+
+
   // Kết nối SSE
   // const eventSource = new EventSource('http://localhost:5000/api/sse/stream');
-
   //   eventSource.onmessage = (event) => {
   //     this.messages.push(event.data); 
   //   };
-
   //   eventSource.onerror = (error) => {
   //     console.error('SSE error:', error);
   //     eventSource.close(); 
