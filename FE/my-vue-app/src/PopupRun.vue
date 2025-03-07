@@ -15,7 +15,7 @@
                 <label>Nhập dữ liệu:</label> <br>
                 <div style="margin: 10px 0;" v-for="(variable, index) in variables" :key="index">
                     <label>{{ variable.variable }}:</label>
-                    <input v-model="number1" class="styled-number" :type="variable.type" placeholder="Vui lòng nhập" required />
+                    <input class="styled-number" :type="variable.type"  placeholder="Vui lòng nhập" required />
                 </div>
                 
                 <button @click="startRun" class="btn btn-primary mt-2">Bắt đầu chạy</button>

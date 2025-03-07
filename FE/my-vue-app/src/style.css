@@ -137,3 +137,37 @@ body,
     width:100%;
     height:100%
 }
+
+@keyframes blinkBorder {
+    0% {
+      border-color: transparent;
+    }
+    50% {
+      border-color: #00ff00; /* Màu xanh lá */
+    }
+    100% {
+      border-color: transparent;
+    }
+  }
+  
+  .executing {
+    border: 2px solid transparent;
+    animation: blinkBorder .5s infinite;
+  }
+
+  @keyframes blinkBorderRed {
+    0% {
+      border-color: transparent;
+    }
+    50% {
+      border-color: red; /* Màu xanh lá */
+    }
+    100% {
+      border-color: transparent;
+    }
+  }
+  
+  .executeError {
+    border: 2px solid transparent;
+    animation: blinkBorderRed .5s infinite;
+  }
