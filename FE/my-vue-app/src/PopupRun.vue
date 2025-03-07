@@ -21,8 +21,25 @@
                 <button @click="startRun" class="btn btn-primary mt-2">Bắt đầu chạy</button>
                 </div>
 
-                <div v-else>
-                <h3>Kết quả:</h3>
+                <div v-else style="overflow: auto;height: 470px;width: 751px;">
+                  <div>
+                    <h4>STATUS: {{ statusWorkflow }}</h4>
+                  </div>
+    
+                  <div v-for="(testRunResultItem, index) in testRunResultArray" :key="index">
+                      
+                    <h4>Bước {{index + 1 }}: </h4>
+                    <v-ace-editor v-if="testRunResultItem.Success"
+                      :value="JSON.stringify(testRunResultItem.Message, null, 2)"
+                      lang="json"
+                      theme="dracula"
+                      style="height: 100px"
+                       :options="{ readOnly: true }"
+                    />
+                    <div v-else  style="color:red;">
+                      {{ testRunResultItem.Message }}
+                    </div>
+                  </div>
                 </div>
             </div>
       </div>
@@ -34,6 +51,9 @@ import { ref, defineProps, onBeforeMount } from "vue";
 import * as Vue from 'vue' // in Vue 3
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import { VAceEditor } from "vue3-ace-editor";
+import "ace-builds/src-noconflict/ace";
+import "ace-builds/src-noconflict/theme-dracula"; // Import theme Dracula
 const emit = defineEmits(['close-popup-run'])
 
 // Định nghĩa props
@@ -49,7 +69,10 @@ const props = defineProps({
 });
 
 let nodeStart = ref({});
-let variables = ref([]);
+let variables = ref([]); 
+let testRunResult = ref(""); 
+const testRunResultArray = ref([]);
+let statusWorkflow = ref("")
 
 onBeforeMount(() => {
   nodeStart.value = props.nodes.find((node) => node.type === 'start');
@@ -69,10 +92,25 @@ const activeTab = ref('input') // Mặc định là tab nhập liệu
 /**
  * Bắt đầu chạy workflow: lấy input , workflow gọi api để chạy
  */
-function startRun() {
+async function startRun() {
 
   // Lưu workflow để lấy ID 
   let workflowID = "";
+  // Lấy dữ liệu workflow từ localStorage 
+  let savedData = localStorage.getItem('vue-flow--save-restore')
+  var workflow = {
+    Name : "Test",
+    GraphString : savedData
+  };
+
+  await axios.post
+  ('http://localhost:5270/workflow/api/draft',workflow, {
+    headers: { "Content-Type": "application/json" }
+}).then((response) => {
+    workflowID = response.data;
+  }).catch((error) => {
+    console.log(error);
+  });
 
   let inputs = {};
 
@@ -81,19 +119,60 @@ function startRun() {
       inputs[variable.variable] = document.getElementsByName(variable.variable)[0].value;
     });
   }
-  
 
+  testRunResultArray.value = [];
 
-  // Kết nối SSE
-  // const eventSource = new EventSource('http://localhost:5000/api/sse/stream');
-  //   eventSource.onmessage = (event) => {
-  //     this.messages.push(event.data); 
-  //   };
-  //   eventSource.onerror = (error) => {
-  //     console.error('SSE error:', error);
-  //     eventSource.close(); 
-  //   };
+    var nodes = document.querySelectorAll([`.vue-flow__node`]);
+    nodes.forEach((node) => {
+      node.classList.remove('executing');
+      node.classList.remove('executed');
+      node.classList.remove('executedError');
+    });
+
+  //Kết nối SSE
+  const eventSource = new EventSource(`http://localhost:5270/workflow/api/sse/${workflowID}`);
+  eventSource.onmessage = (event) => {
+    // this.messages.push(event.data); 
+    var result = JSON.parse(event.data);
+    if(result.eventName == "node_started"){
+      debugger
+      document.querySelector([`[data-id=${result.node.id}]`]).classList.add('executing');
+    }
+    else if(result.eventName == "node_finished"){
+      debugger
+      document.querySelector([`[data-id=${result.node.id}]`]).classList.remove('executing');
+      document.querySelector([`[data-id=${result.node.id}]`]).classList.add('executed');
+      testRunResultArray.value.push({Message: result.result.Data, Success: result.result.Success});
+    }
+    else if(result.eventName == "error"){
+      document.querySelector([`[data-id=${result.node.id}]`]).classList.remove('executing');
+      document.querySelector([`[data-id=${result.node.id}]`]).classList.add('executedError');
+      testRunResultArray.value.push({Message: result.result.Error, Success: result.result.Success});
+      statusWorkflow.value = "FAIL";
+    }
+    else if(result.eventName == "workflow_finished"){
+      statusWorkflow.value = "SUCCESS";
+    }
     activeTab.value = 'result';
+  };
+  eventSource.onerror = (error) => {
+    console.error('SSE error:', error);
+    eventSource.close(); 
+  };
+
+  var runWorkflowParameter = {
+    WorkflowID : workflowID,
+    InputsString : JSON.stringify(inputs)
+  };
+
+  await axios.post
+  ('http://localhost:5270/workflow/api/draft/runv2',runWorkflowParameter, {
+    headers: { "Content-Type": "application/json" }
+  })
+
+
+
+    
 }
 </script>
 

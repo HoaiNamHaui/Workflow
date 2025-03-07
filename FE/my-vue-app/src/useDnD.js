@@ -129,18 +129,21 @@ export default function useDragAndDrop() {
       case "start":
         node.data = {
           ...node.data,
+          type : "start",
           variables: [],
         };
         break;
       case "end":
         node.data = {
           ...node.data,
+          type : "end",
           outputs: [],
         };
         break;
       case "code":
         node.data = {
           ...node.data,
+          type : "code",
           code: `
 function main({arg1, arg2}) 
 {
